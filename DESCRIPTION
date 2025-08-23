@@ -13,3 +13,5 @@ Imports:
     stringr
 Suggests: 
     XLConnect
+URL: https://github.com/Amaury974/ajorant.divers
+BugReports: https://github.com/Amaury974/ajorant.divers/issues
