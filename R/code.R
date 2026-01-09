@@ -52,26 +52,26 @@ lire_onglet <- function(classeur, onglet, tableau = TRUE){
 
   suppressWarnings({
     df_onglet <- XLConnect::readWorksheet(classeur,
-                               onglet,
-                               startRow =1, autofitRow = tableau,
-                               startCol = 1, autofitCol = FALSE,
-                               colTypes = unlist(list(character(0),'character')[c(tableau, !tableau)]),
-                               header = tableau,
-                               useCachedValues = TRUE,
-                               dateTimeFormat = '%d/%m/%Y')
+                                          onglet,
+                                          startRow =1, autofitRow = tableau,
+                                          startCol = 1, autofitCol = FALSE,
+                                          colTypes = unlist(list(character(0),'character')[c(tableau, !tableau)]),
+                                          header = tableau,
+                                          useCachedValues = TRUE,
+                                          dateTimeFormat = '%d/%m/%Y')
 
 
     if(!tableau){
 
       # on force la récupération au format numeric pour éviter les arrondis
       df_onglet_2 <- XLConnect::readWorksheet(classeur,
-                                   onglet,
-                                   startRow =1, autofitRow = tableau,
-                                   startCol = 1, autofitCol = FALSE,
-                                   colTypes = 'numeric',
-                                   header = tableau,
-                                   useCachedValues = TRUE,
-                                   dateTimeFormat = '%d/%m/%Y')
+                                              onglet,
+                                              startRow =1, autofitRow = tableau,
+                                              startCol = 1, autofitCol = FALSE,
+                                              colTypes = 'numeric',
+                                              header = tableau,
+                                              useCachedValues = TRUE,
+                                              dateTimeFormat = '%d/%m/%Y')
 
 
 
@@ -114,8 +114,9 @@ lire_onglet <- function(classeur, onglet, tableau = TRUE){
 #'   Equivalent MAE pour des pourcentages d'erreur.
 #'   Utile pour des données ayant une grande amplitude,
 #'   typiquement des modèles de croissance.
-#' * RMSPE : Root Mean Squared Percentage Error (indicateur perso je crois)
-#'   Equivalent RMSE pour des pourcentages d'erreur.
+#' * RMSPE : Root Mean Squared Percentage Error (indicateur perso)
+#'   Equivalent RMSE du log de la variable (approche à privilégier)
+#'   RMSE pour des pourcentages d'erreur.
 #'   Utile pour des données ayant une grande amplitude,
 #'   typiquement des modèles de croissance.
 #'
@@ -231,4 +232,121 @@ format_tel <- function(num){
 
   tel_format
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' Lecture de shapefile depuis un serveur FTP
+#'
+#' Détection, téléchargement depuis un serveur FTP puis lecture des fichiers shapefile.
+#'
+#' @param url_dossier URL du dossier contenant le shapefile,
+#'   format `ftp://username:password@ftppath` seul ou `ftp://ftppath`
+#'   en précisant `identification` si nécessaire
+#' @param identification `username:password` du FTP si nécéssaire
+#'   uniquement si ils ne sont pas intégrés dans `url_dossier`
+#'
+#' @returns objet de classe `sf`, voir doc du package `sf`
+#'
+#' @export
+#'
+#' @details
+#' La détéction des fichiers se fait avec `RCurl::getURL`.
+#' Ils sont téléchargé dans une direction temporaire et
+#' lu avec `sf::st_read`
+st_read_ftp <- function(url_dossier, identification = NULL){
+
+  if (!requireNamespace("RCurl", quietly = TRUE)) {
+    stop(
+      "Vous devez installer le package \"RCurl\" pour utiliser cette fonction.",
+      call. = FALSE
+    )
+  }
+  if (!requireNamespace("sf", quietly = TRUE)) {
+    stop(
+      "Vous devez installer le package \"sf\" pour utiliser cette fonction.",
+      call. = FALSE
+    )
+  }
+  if (!requireNamespace("utils", quietly = TRUE)) {
+    stop(
+      "Vous devez installer le package \"utils\" pour utiliser cette fonction.",
+      call. = FALSE
+    )
+  }
+
+  # url_dossier doit finir par un /
+  url_dossier <- paste0(url_dossier, '/') |> # on en rajoute un
+    stringr::str_remove('(?<=/)/$') # et on en enlève un si il y en a deux
+
+  # standardisation de l'url
+  if(stringr::str_detect(url_dossier, '@')){
+    # url au format ftp://username:password@ftppath
+
+    url_id <- url_dossier
+    url_simple <- paste0("ftp://", stringr::str_extract(url_dossier, '[^@]+$'))
+    identification <- stringr::str_extract(url_dossier, '(?<=ftp:..)[^@]+')
+
+  } else {
+    # url au format ftp://ftppath
+
+    if(!is.null(identification)){
+      # avec identification
+      url_simple <- url_dossier
+      url_id <- paste0("ftp://",
+                       identification,
+                       '@', stringr::str_remove(url_dossier, "ftp:.."))
+
+    } else url_id <- url_simple <- url_dossier # sans identification
+  }
+
+  # url_simple = ftp://ftppath
+  # url_id = ftp://username:password@ftppath
+
+  # récupération de la liste des fichiers du dossier
+  fichiers <- RCurl::getURL(url_simple, userpwd = identification, dirlistonly = TRUE)        # <- à voir si ça marche avec identification = NULL
+  liste_fichiers <- strsplit(fichiers, "\r\n")[[1]]
+
+  # uniquement les fichier du shapefile
+  fichiers_shapefile <-
+    liste_fichiers[stringr::str_detect(liste_fichiers,"((shp)|(shx)|(dbf)|(prj)|(cpg))$")]
+
+  # téléchargement des fichiers dans un dossier temporaire
+  temp_dir <- tempdir()
+
+  for(fichier_i in fichiers_shapefile) {
+    utils::download.file(
+      paste0(url_id, fichier_i),
+      file.path(temp_dir, fichier_i),
+      mode = "wb"
+    )
+  }
+
+  # Lecture du shapefile depuis le dossier temporaire
+  couche_sf <- sf::st_read(file.path(temp_dir,
+                                     fichiers_shapefile[stringr::str_detect(fichiers_shapefile, 'shp$')]))
+
+}
+
 

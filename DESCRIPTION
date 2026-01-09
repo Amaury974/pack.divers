@@ -12,6 +12,9 @@ Imports:
     dplyr,
     stringr
 Suggests: 
+    RCurl,
+    sf,
+    utils,
     XLConnect
 URL: https://github.com/Amaury974/ajorant.divers
 BugReports: https://github.com/Amaury974/ajorant.divers/issues

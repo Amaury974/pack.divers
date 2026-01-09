@@ -8,6 +8,14 @@
 \description{
 What the package does (one paragraph).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/Amaury974/ajorant.divers}
+  \item Report bugs at \url{https://github.com/Amaury974/ajorant.divers/issues}
+}
+
+}
 \author{
 \strong{Maintainer}: Amaury Jorant \email{amaury.jorant@protonmail.com}
 

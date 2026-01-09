@@ -39,8 +39,9 @@ A quel point le modèle est meilleur que de juste utiliser la moyenne.
 Equivalent MAE pour des pourcentages d'erreur.
 Utile pour des données ayant une grande amplitude,
 typiquement des modèles de croissance.
-\item RMSPE : Root Mean Squared Percentage Error (indicateur perso je crois)
-Equivalent RMSE pour des pourcentages d'erreur.
+\item RMSPE : Root Mean Squared Percentage Error (indicateur perso)
+Equivalent RMSE du log de la variable (approche à privilégier)
+RMSE pour des pourcentages d'erreur.
 Utile pour des données ayant une grande amplitude,
 typiquement des modèles de croissance.
 }
