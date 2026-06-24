@@ -350,3 +350,32 @@ st_read_ftp <- function(url_dossier, identification = NULL){
 }
 
 
+
+#' Standardisation noms de communes (La Réunion)
+#'
+#' @param Commune noms de communes avec typologie chaotique
+#' @param champs type de résultats attendus code_insee, Commune et/ou Commune_MAJ
+#'
+#' @importFrom stringr str_remove_all str_remove str_to_upper str_replace
+#' @export
+stand_commune <- function(Commune, champs = c('code_insee', 'Commune')){
+
+  Com2 <- Commune |>
+    str_remove_all(' ') |>
+    str_remove_all('-') |>
+    str_remove_all('\\d') |>
+    str_to_upper() |>
+    str_remove('^LES') |>
+    str_remove("^L'") |>
+    str_remove('LE') |>
+    str_replace('SAINT', 'ST') |>
+    iconv(from="UTF-8",to="ASCII//TRANSLIT")
+
+  data.frame(Commune_simple = Com2) |>
+    dplyr::left_join(df_communes_974,
+                     by = dplyr::join_by(Commune_simple)) |>
+    dplyr::select(dplyr::all_of(champs))
+
+}
+
+
