@@ -367,7 +367,7 @@ stand_commune <- function(Commune, champs = c('code_insee', 'Commune')){
     str_to_upper() |>
     str_remove('^LES') |>
     str_remove("^L'") |>
-    str_remove('LE') |>
+    str_remove('^LE') |>
     str_replace('SAINT', 'ST') |>
     iconv(from="UTF-8",to="ASCII//TRANSLIT")
 
