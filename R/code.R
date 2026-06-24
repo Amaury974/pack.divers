@@ -371,10 +371,11 @@ stand_commune <- function(Commune, champs = c('code_insee', 'Commune')){
     str_replace('SAINT', 'ST') |>
     iconv(from="UTF-8",to="ASCII//TRANSLIT")
 
-  data.frame(Commune_simple = Com2) |>
+  jointure <- data.frame(Commune_simple = Com2) |>
     dplyr::left_join(df_communes_974,
-                     by = dplyr::join_by(Commune_simple)) |>
-    dplyr::select(dplyr::all_of(champs))
+                     by = dplyr::join_by(Commune_simple))
+    # dplyr::select(dplyr::all_of(champs))
+  jointure[,champs]
 
 }
 
