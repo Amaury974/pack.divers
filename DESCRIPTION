@@ -1,9 +1,13 @@
 Package: pack.divers
-Title: Divers fonctions utilitaires inclassables
+Title: Diverses fonctions utilitaires inclassables
 Version: 0.0.0.9000
 Authors@R: 
     person("Amaury", "Jorant", , "amaury.jorant@protonmail.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: Fonctions utilitaires polyvalentes : localisation récursive de
+    fichiers, lecture d'onglets Excel et de shapefiles hébergés sur un serveur
+    FTP, indicateurs d'évaluation de modèles (RMSE, efficience, biais,
+    sensibilité, indice de Youden...) et mise en forme de p-values et de
+    numéros de téléphone.
 License: GPL (>= 3)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -16,5 +20,5 @@ Suggests:
     sf,
     utils,
     XLConnect
-URL: https://github.com/Amaury974/ajorant.divers
-BugReports: https://github.com/Amaury974/ajorant.divers/issues
+URL: https://github.com/Amaury974/pack.divers
+BugReports: https://github.com/Amaury974/pack.divers/issues

@@ -128,7 +128,7 @@ lire_onglet <- function(classeur, onglet, tableau = TRUE){
 #'  * Youden_index (ou J) : sensibilité + spécificité - 1
 #'    Indice de performance global, insensible au bias des données d'entrainement
 indic <- function(obs, sim, indicateur, .poids = NULL){
-  if(is.null(.poids)) .poids = 1/sum(!(is.na(obs)|is.na(obs))) else .poids = .poids / sum(.poids)
+  if(is.null(.poids)) .poids = 1/sum(!(is.na(obs)|is.na(sim))) else .poids = .poids / sum(.poids)
   if(is.infinite(.poids[1])) return(NA)
 
   if(toupper(indicateur) == 'RMSE')
